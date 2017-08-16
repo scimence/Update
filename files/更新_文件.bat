@@ -1,0 +1,1 @@
+"%~dp0Update.exe" https://git.oschina.net/scimence/apkTool/raw/master/files/updateFiles.txt E:\tmp2\Update_Files\updateFiles.txt 645fe1bc2a99785460ac121d3885f2ba
