@@ -53,12 +53,33 @@ namespace Update
         // 更新指定的文件： "%~dp0Update.exe" https://git.oschina.net/scimence/apkTool/raw/master/files/updateFiles.txt E:\tmp2\Update_Files\updateFiles.txt 645fe1bc2a99785460ac121d3885f2ba
         // 更新目录下文件："%~dp0Update.exe" [CONFIG]https://git.oschina.net/scimence/apkTool/raw/master/files/updateFiles.txt E:\tmp2\Update_Files\ 渠道计费包\0000001\
 
+        private static bool RESTART = false;   // 更新完成后，是否打开更新后的文件
+
+        /// <summary>
+        /// 解析参数控制信息
+        /// </summary>
+        private static string[] AnalyseArgs(string[] args)
+        {
+            List<string> list = new List<string>();
+            if (args != null && args.Length > 0)
+            {
+                foreach (string arg in args)
+                {
+                    if (arg.Equals("RESTART")) RESTART = true;
+                    else list.Add(arg);
+                }
+            }
+            return list.ToArray();
+        }
+
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
         [STAThread]
         static void Main(string[] args)
         {
+            args = AnalyseArgs(args);   // 参数解析
+
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form1());
@@ -74,6 +95,9 @@ namespace Update
 
             //url = "[CONFIG]https://git.oschina.net/scimence/apkTool/raw/master/files/updateFiles.txt"; path = @"E:\tmp2\Update_Files\"; arg3 = @"渠道计费包\0000843\->渠道计费包\10000843\";
             //url = "[CONFIG]https://git.oschina.net/joymeng/empty/raw/master/MD5.txt"; path = @"E:\tmp2\Update_Files2\"; arg3 = @"files\";
+
+            //url = "[CONFIG]https://git.oschina.net/joymeng/ChannelDemoTool/raw/master/MD5.txt"; path = @"D:\sci\Visual Studio 2008\Projects\ChannelDemoTool\ChannelDemoTool\bin\Debug\"; arg3 = @"ChannelDemoTool.exe";
+            //RESTART = true;
 
             if (url.StartsWith("[CONFIG]"))
             {
@@ -99,8 +123,16 @@ namespace Update
                     if (File.Exists(filePath))
                     {
                         string fileMD5 = MD5.FileMD5(filePath);
-                        if (!fileMD5.Equals(md5)) File.Delete(filePath);    // 文件内容变动，删除现有文件
-                        else return;                                        // 文件内容相同，不需要更新
+                        if (!fileMD5.Equals(md5))
+                        {
+                            if (ProcessTool.ProcessIsRunning(filePath))
+                            {
+                                ProcessTool.killProcessExe(filePath);   // 结束exe进程
+                                ProcessTool.delay(3000);                // 延时3秒
+                            }
+                            File.Delete(filePath);                      // 文件内容变动，删除现有文件
+                        }
+                        else return;                                    // 文件内容相同，不需要更新
                     }
                     else checkDirectory(filePath);
 
@@ -110,12 +142,18 @@ namespace Update
                     if (filePath.EndsWith(".txt"))
                     {
                         String data = client.DownloadString(url);
-                        if (data.Contains("\n") && !data.Contains("\r\n")) // 对于txt文件，进行替换换行符特殊处理
+                        if (data.Contains("\n") && !data.Contains("\r\n"))  // 对于txt文件，进行替换换行符特殊处理
                             data = data.Replace("\n", "\r\n");
 
                         SaveFile(data, filePath);
                     }
                     else client.DownloadFile(url, filePath);
+
+                    if (RESTART)
+                    {
+                        ProcessTool.delay(2000);                    // 延时2秒
+                        System.Diagnostics.Process.Start(filePath); // 打开更新后的文件
+                    }
                 }
             }
             catch { }
@@ -211,14 +249,17 @@ namespace Update
                 // 删除同步更新目录下，仅存在于本地的文件
                 string localPath = dirPath + perfix.Replace("/", "\\");
                 if (!perfixLocal.Equals("")) localPath = dirPath + perfixLocal.Replace("/", "\\"); ;                                 // 替换在线文件路径为本地路径
-                string localFiles = getAllFiles(localPath);             // 获取本地目录下所有文件
+                string localFiles = getAllFiles(localPath); // 获取本地目录下所有文件
                 string[] A = localFiles.Split(';');
                 foreach (string F in A)
                 {
                     try
                     {
                         if (!updateFiles.Contains(F))
-                            File.Delete(F);   // 删除目录下非更新的文件
+                        {
+                            ProcessTool.killProcessExe(F);  // 结束exe进程
+                            File.Delete(F);                 // 删除目录下非更新的文件
+                        }
                     }
                     catch { }
                 }
@@ -228,21 +269,21 @@ namespace Update
         }
 
 
-        /// <summary>
-        /// 关闭名称为processName的所有进程
-        /// </summary>
-        public static void KillProcess(string processName)
-        {
-            Process[] processes = Process.GetProcessesByName(processName);
+        ///// <summary>
+        ///// 关闭名称为processName的所有进程
+        ///// </summary>
+        //public static void KillProcess(string processName)
+        //{
+        //    Process[] processes = Process.GetProcessesByName(processName);
 
-            foreach (Process process in processes)
-            {
-                if (process.MainModule.FileName == processName)
-                {
-                    process.Kill();
-                }
-            }
-        }
+        //    foreach (Process process in processes)
+        //    {
+        //        if (process.MainModule.FileName == processName)
+        //        {
+        //            process.Kill();
+        //        }
+        //    }
+        //}
 
         /// <summary>  
         /// 获取目录path下所有子文件名  
