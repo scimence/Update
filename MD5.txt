@@ -4,7 +4,7 @@
 待更新文件(
 
 README.md(732a52700db7670e5961c26b85950bd7)
-files/Update.exe(d796661925259808c6d2979d7463f554)
+files/Update.exe(9b128a99141aca7c100a58630d745896)
 files/updateFiles.txt(645fe1bc2a99785460ac121d3885f2ba)
 files/更新_所有文件.bat(782631bf45261d1f50fb7d325de3f5b9)
 files/更新_文件.bat(a4ead8714e7ade7c9138460adc9dcd3f)
