@@ -1,1 +1,1 @@
-"%~dp0Update.exe" https://git.oschina.net/scimence/apkTool/raw/master/files/updateFiles.txt "%~dp0updateFiles.txt" 645fe1bc2a99785460ac121d3885f2ba
+"%~dp0Update.exe" https://git.oschina.net/joymeng/apkTool/raw/master/files/updateFiles.txt "%~dp0updateFiles.txt"
