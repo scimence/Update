@@ -4,6 +4,10 @@
 Update.exe下载：
 https://scimence.gitee.io/update/files/Update.exe
 
+
+MD5.exe下载（与Update.exe配套的MD5计算工具）：
+https://scimence.gitee.io/update/tools/getMD5.exe
+
 -----------------------------
 
 ###1、更新_文件.bat
