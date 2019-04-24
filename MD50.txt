@@ -1,0 +1,12 @@
+﻿服务器资源目录(https://scimence.gitee.io/Update)
+本地资源目录(F:\tmp\Update\)
+
+待更新文件(
+
+files/Update.exe(3f10931404406b552e36f87a389c015)
+files/更新_所有文件.bat(9c5611db2b46cc25cb38a9da0b72c89d)
+files/更新_文件.bat(bc6dcf49ef43914cd6ed8c48239e2d1a)
+files/更新_目录（不删除不存在的文件）.bat(36cfe5636fdb847d603f9930c44ec351)
+files/更新_目录（删除不存在的文件）.bat(90fdc2078cea549d6fe909dea45f43c7)
+
+)待更新文件
